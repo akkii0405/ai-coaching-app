@@ -1,0 +1,49 @@
+<div class="max-w-3xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg border border-gray-100">
+  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">🗺️ 目標達成ロードマップ</h1>
+
+  <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+    <h2 class="text-lg font-bold text-gray-700">🎯 目標: <%= @goal.title %></h2>
+    <p class="text-sm text-gray-500 mt-1">🏁 達成期限: <%= @goal.target_date %></p>
+  </div>
+
+  <!-- AIからのメッセージ -->
+  <div class="mb-8 p-5 bg-blue-50 border-l-4 border-blue-400 rounded">
+    <h2 class="text-lg font-bold text-blue-800 mb-2">💡 AIコーチからのアドバイス</h2>
+    <p class="text-gray-700 leading-relaxed">
+      <%= @goal.ai_roadmap["ai_message"] %>
+    </p>
+  </div>
+
+  <!-- ロードマップのステップ -->
+  <div class="mb-8">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">🛤️ ステップごとの計画</h2>
+    <div class="space-y-4">
+      <% @goal.ai_roadmap["roadmap"].each do |step_data| %>
+        <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+          <div class="flex items-center mb-2">
+            <span class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded mr-2">Step <%= step_data["step"] %></span>
+            <span class="text-sm text-gray-500 font-medium"><%= step_data["period"] %></span>
+          </div>
+          <h3 class="text-lg font-bold text-gray-800 mb-2"><%= step_data["milestone"] %></h3>
+          <ul class="list-disc list-inside text-gray-600 text-sm">
+            <% step_data["focus_points"].each do |point| %>
+              <li><%= point %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- アクションボタン -->
+  <div class="flex justify-center gap-4 mt-8">
+    <% if @goal.draft? %>
+      <%= link_to "もう一度やり直す", edit_goal_path(@goal), class: "px-6 py-2 bg-gray-200 text-gray-700 rounded-md font-bold hover:bg-gray-300 transition" %>
+      <%= button_to "このロードマップで確定する", confirm_goal_path(@goal), method: :patch, class: "px-6 py-2 bg-blue-600 text-white rounded-md font-bold hover:bg-blue-700 transition" %>
+    <% elsif @goal.in_progress? %>
+      <div class="px-6 py-2 bg-green-100 text-green-700 rounded-md font-bold border border-green-300">
+        🚀 現在進行中の目標です
+      </div>
+    <% end %>
+  </div>
+</div>

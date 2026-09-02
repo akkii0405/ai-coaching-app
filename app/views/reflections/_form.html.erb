@@ -1,0 +1,32 @@
+<%= form_with(model: reflection, class: "contents") do |form| %>
+  <% if reflection.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(reflection.errors.count, "error") %> prohibited this reflection from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% reflection.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :date, "日付" %>
+    <%= form.date_field :date, readonly: true, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full bg-gray-100 text-gray-500" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :task_volume, "今日のタスク量はどうでしたか？" %>
+    <%= form.select :task_volume, Reflection.task_volumes.keys.map { |k| [k.humanize, k] }, {}, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :comment, "原因や、AIへの追加要望（例：もっとタスクを減らして等）" %>
+    <%= form.textarea :comment, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": reflection.errors[:comment].none?, "border-red-400 focus:outline-red-600": reflection.errors[:comment].any?}] %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

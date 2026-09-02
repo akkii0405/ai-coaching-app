@@ -1,0 +1,35 @@
+<%= form_with(model: goal, class: "contents") do |form| %>
+  <% if goal.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+      <h2><%= pluralize(goal.errors.count, "error") %> prohibited this goal from being saved:</h2>
+      <ul>
+        <% goal.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :title, "目標（何を達成したいですか？）", class: "font-bold text-gray-700" %>
+    <%= form.text_field :title, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", placeholder: "例：基本情報技術者試験に合格する" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :target_date, "いつまでに達成したいですか？", class: "font-bold text-gray-700" %>
+    <%= form.date_field :target_date, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <!-- やり直し（Edit）の時だけ、AIへの要望入力欄を表示する -->
+  <% if !goal.new_record? %>
+    <div class="my-5 p-4 bg-blue-50 rounded-lg border border-blue-100">
+      <label for="ai_request" class="font-bold text-blue-800">🤖 AIへの追加要望（やり直す場合のみ）</label>
+      <!-- 注意：これはgoalテーブルには保存しない一時データなので、form_withとは独立したタグを使います -->
+      <%= text_area_tag :ai_request, nil, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", rows: 3, placeholder: "例：もっとゆったりしたスケジュールにしてほしい" %>
+    </div>
+  <% end %>
+
+  <div class="inline">
+    <%= form.submit "AIにロードマップを作成してもらう ✨", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer hover:bg-blue-700 w-full" %>
+  </div>
+<% end %>

@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  due_date: 2026-08-30
+  task_type: 1
+  status: 1
+
+two:
+  title: MyString
+  due_date: 2026-08-30
+  task_type: 1
+  status: 1

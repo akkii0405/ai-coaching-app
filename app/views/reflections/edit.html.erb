@@ -1,0 +1,11 @@
+<% content_for :title, "Editing reflection" %>
+
+<div class="max-w-2xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg border border-gray-100">
+  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">🔄 AIに再提案をお願いする</h1>
+  
+  <%= render "form", reflection: @reflection %>
+  
+  <div class="text-center mt-4">
+    <%= link_to "キャンセルして戻る", @reflection, class: "text-blue-600 font-medium hover:underline" %>
+  </div>
+</div>

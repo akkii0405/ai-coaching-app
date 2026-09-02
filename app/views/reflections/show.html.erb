@@ -1,0 +1,49 @@
+<div class="max-w-2xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg border border-gray-100">
+  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">✨ AIコーチからの提案</h1>
+
+  <!-- AIからのフィードバック部分 -->
+  <div class="mb-8 p-5 bg-blue-50 border-l-4 border-blue-400 rounded">
+    <h2 class="text-lg font-bold text-blue-800 mb-2">💡 フィードバック</h2>
+    <p class="text-gray-700 leading-relaxed">
+      <%= simple_format(@reflection.ai_feedback) %>
+    </p>
+  </div>
+
+  <!-- 明日のタスク案部分 -->
+  <div class="mb-8">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">📋 明日のタスク案</h2>
+    
+    <ul class="space-y-3">
+      <% @reflection.ai_suggested_tasks.each do |task| %>
+        <li class="flex items-center p-3 bg-gray-50 rounded-md border border-gray-200">
+          <!-- タスク名 -->
+          <span class="flex-grow font-medium text-gray-700"><%= task["title"] %></span>
+          
+          <!-- タスクの種類（バッジ） -->
+          <% if task["task_type"] == "must_do" %>
+            <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded font-bold">必須</span>
+          <% else %>
+            <span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded font-bold">ボーナス</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <!-- アクションボタン（機能は次のステップで！） -->
+  <!-- アクションボタン -->
+  <div class="flex justify-center gap-4 mt-8">
+    <% if @reflection.draft? %>
+      <!-- まだ「下書き」状態の時だけ、この2つのボタンを表示する -->
+      <%= link_to "もう一度やり直す", edit_reflection_path(@reflection), class: "px-6 py-2 bg-gray-200 text-gray-700 rounded-md font-bold hover:bg-gray-300 transition" %>
+      
+      <%= button_to "この内容でカレンダーに確定する", confirm_reflection_path(@reflection), method: :patch, class: "px-6 py-2 bg-blue-600 text-white rounded-md font-bold hover:bg-blue-700 transition" %>
+    
+    <% else %>
+      <!-- すでに「確定済み」の場合は、ボタンの代わりにメッセージを表示する -->
+      <div class="px-6 py-2 bg-gray-100 text-gray-500 rounded-md font-bold border border-gray-300">
+        ✅ カレンダーに登録済みです
+      </div>
+    <% end %>
+  </div>
+</div>
