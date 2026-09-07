@@ -139,7 +139,8 @@ class GoalsController < ApplicationController
         # JSONをRubyのハッシュに変換して、そのまま ai_roadmap カラムに保存する！
         @goal.ai_roadmap = JSON.parse(response.dig("choices", 0, "message", "content"))
       rescue => e
-        puts "AI通信エラー: #{e.message}"
+        Rails.logger.error("AI通信エラー (GoalsController): #{e.class}: #{e.message}")
+        Rails.logger.error(e.backtrace&.first(10)&.join("\n"))
         @goal.ai_roadmap = { "ai_message" => "ロードマップの生成に失敗しました。", "roadmap" => [] }
       end
     end

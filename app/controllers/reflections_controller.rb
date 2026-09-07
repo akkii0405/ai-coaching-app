@@ -141,7 +141,8 @@ class ReflectionsController < ApplicationController
         @reflection.ai_feedback = result["ai_feedback"]
         @reflection.ai_suggested_tasks = result["suggested_tasks"]
       rescue => e
-        puts "AI通信エラー: #{e.message}"
+        Rails.logger.error("AI通信エラー (ReflectionsController): #{e.class}: #{e.message}")
+        Rails.logger.error(e.backtrace&.first(10)&.join("\n"))
         @reflection.ai_feedback = "AIの提案生成に失敗しました。"
         @reflection.ai_suggested_tasks = []
       end
