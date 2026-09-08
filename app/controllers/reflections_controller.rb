@@ -108,12 +108,51 @@ class ReflectionsController < ApplicationController
       volume_jp = { "too_much" => "多い", "just_right" => "ちょうどいい", "too_little" => "少ない" }
       current_volume = volume_jp[@reflection.task_volume]
 
+      # --- 1. 目標とロードマップの取得 ---
+      goals_info = current_user.goals.map do |g|
+        "・目標: #{g.title}\n  ロードマップ: #{g.ai_roadmap}"
+      end.join("\n\n")
+      goals_info = "設定なし" if goals_info.blank?
+
+      # --- 2. 今日のタスクとその状態を取得 ---
+      # ※ taskテーブルに「due_date（期日）」カラムがある前提のコードです
+      todays_tasks = current_user.tasks.where(due_date: @reflection.date).map do |task|
+        
+        # モデルで定義しているenum（status）の値に合わせて日本語に変換します
+        # （例: "completed" や "done" なら完了とする）
+        status_jp = if task.status == "completed" 
+                      "完了"
+                    else
+                      "未完了"
+                    end
+        
+        "・#{task.title} 【#{status_jp}】"
+      end.join("\n")
+      
+      todays_tasks = "今日のタスクは設定されていませんでした。" if todays_tasks.blank?
+
+      # --- 3. 過去の振り返りの取得（直近3件） ---
+      # id: nil を除外することで、今まさに保存しようとしている未確定のデータを除きます
+      past_reflections = current_user.reflections.where.not(id: nil).order(date: :desc).limit(3).map do |r|
+        "・#{r.date}: #{r.comment}"
+      end.join("\n")
+      past_reflections = "なし" if past_reflections.blank?
+
       client = OpenAI::Client.new
       prompt = <<~PROMPT
-        あなたはプロのAIコーチです。ユーザーの今日の振り返りと要望をもとに、フィードバックと明日のタスク案を作成してください。
+        あなたはプロのAIコーチです。ユーザーの長期的な目標、過去のタスク履歴、過去の振り返り、そして今日の要望をもとに、最適なフィードバックと明日のタスク案を作成してください。
         必ず以下のJSONフォーマットのみで出力してください。
 
-        【ユーザーの振り返り】
+        【ユーザーの長期目標とロードマップ】
+        #{goals_info}
+
+        【今日のタスク一覧と結果】
+        #{todays_tasks}
+
+        【過去の振り返り（直近3件）】
+        #{past_reflections}
+
+        【今日の振り返り（最新）】
         今日のタスク量: #{current_volume}
         原因や要望: #{@reflection.comment}
 
