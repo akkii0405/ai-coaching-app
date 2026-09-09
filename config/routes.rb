@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "dashboards/show"
   resources :reflections do
     member do
       patch :confirm # 「/reflections/:id/confirm」という専用URLを追加！

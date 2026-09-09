@@ -1,0 +1,56 @@
+<% content_for :title, "Dashboard" %>
+
+<div class="max-w-5xl mx-auto mt-8 px-4">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="font-bold text-4xl">Dashboard</h1>
+    <!-- 共通メニュー -->
+    <div class="flex space-x-4">
+      <%= link_to "目標一覧", goals_path, class: "rounded-md px-3.5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white block font-medium" %>
+      <%= link_to "タスク一覧", tasks_path, class: "rounded-md px-3.5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white block font-medium" %>
+      <%= link_to "振り返りを書く", new_reflection_path, class: "rounded-md px-3.5 py-2.5 bg-green-600 hover:bg-green-500 text-white block font-medium" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- 左側：設定中の目標 -->
+    <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+      <h2 class="text-2xl font-bold mb-4 text-blue-700">🎯 設定中の目標</h2>
+      <% if @goals.any? %>
+        <ul class="space-y-4">
+          <% @goals.each do |goal| %>
+            <li class="border-b pb-2">
+              <p class="font-medium text-lg"><%= goal.title %></p>
+              <% if goal.ai_roadmap.present? %>
+                <p class="text-sm text-gray-500 truncate"><%= goal.ai_roadmap %></p>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-gray-500">まだ目標が設定されていません。</p>
+        <%= link_to "目標を設定する", new_goal_path, class: "mt-2 inline-block text-blue-600 underline" %>
+      <% end %>
+    </div>
+
+    <!-- 右側：今日のタスク（チェックボックス付き） -->
+    <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+      <h2 class="text-2xl font-bold mb-4 text-green-700">✅ 今日のタスク</h2>
+      <% if @todays_tasks.any? %>
+        <ul class="space-y-3">
+          <% @todays_tasks.each do |task| %>
+            <li class="flex items-center space-x-3">
+              <!-- チェックボックス -->
+              <input type="checkbox" class="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500" <%= 'checked' if task.status == 'completed' %>>
+              <span class="text-lg <%= 'line-through text-gray-400' if task.status == 'completed' %>">
+                <%= task.title %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-gray-500">今日のタスクはまだありません。</p>
+        <%= link_to "タスクを追加する", new_task_path, class: "mt-2 inline-block text-green-600 underline" %>
+      <% end %>
+    </div>
+  </div>
+</div>
