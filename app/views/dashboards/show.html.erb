@@ -20,9 +20,43 @@
           <% @goals.each do |goal| %>
             <li class="border-b pb-2">
               <p class="font-medium text-lg"><%= goal.title %></p>
-              <% if goal.ai_roadmap.present? %>
-                <p class="text-sm text-gray-500 truncate"><%= goal.ai_roadmap %></p>
-              <% end %>
+              <!-- 変更後 -->
+<% if goal.ai_roadmap.present? && goal.ai_roadmap.is_a?(Hash) %>
+  <div class="mt-4 space-y-4">
+    <!-- ① AIからのメッセージを取り出す -->
+    <div class="bg-blue-50 text-blue-800 p-3 rounded-md text-sm leading-relaxed">
+      💡 <%= goal.ai_roadmap["ai_message"] %>
+    </div>
+
+    <!-- ② ロードマップのリストをループで回す -->
+    <div class="space-y-4 pl-2">
+      <% goal.ai_roadmap["roadmap"].each do |step_data| %>
+        <!-- 左側に青い線を引いてタイムライン風にするデザイン -->
+        <div class="border-l-4 border-blue-400 pl-4 py-1">
+          
+          <!-- ③ ループの中のデータを取り出して表示 -->
+          <p class="text-xs text-gray-500 font-bold">
+            Step <%= step_data["step"] %> （<%= step_data["period"] %>）
+          </p>
+          <p class="font-semibold text-gray-800 mt-1">
+            <%= step_data["milestone"] %>
+          </p>
+          
+          <!-- フォーカスポイントもリスト（配列）なので、さらにループで回す！ -->
+          <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+            <% step_data["focus_points"].each do |point| %>
+              <li><%= point %></li>
+            <% end %>
+          </ul>
+          
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <!-- 万が一データがうまく読み込めなかった時の予備 -->
+  <p class="text-sm text-gray-500"><%= goal.ai_roadmap %></p>
+<% end %>
             </li>
           <% end %>
         </ul>

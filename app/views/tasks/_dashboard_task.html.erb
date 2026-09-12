@@ -1,0 +1,12 @@
+<li id="dashboard_task_<%= task.id %>" class="flex items-center space-x-3">
+  <%= form_with model: task, url: task_path(task), method: :patch, class: "flex items-center" do |f| %>
+    <%= f.check_box :status, 
+          { checked: task.status == 'completed',
+            onchange: "this.form.requestSubmit()",
+            class: "w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer" },
+          "completed", "pending" %>
+  <% end %>
+  <span class="text-lg <%= 'line-through text-gray-400' if task.status == 'completed' %>">
+    <%= task.title %>
+  </span>
+</li>
