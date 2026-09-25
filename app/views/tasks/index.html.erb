@@ -1,43 +1,155 @@
-<% content_for :title, "Tasks" %>
+<% content_for :title, "カレンダー - GoalPilot AI" %>
 
-<div class="w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
+<div class="min-h-screen w-full bg-[#eef1f4] text-slate-800">
+  <header class="border-b border-[#7bb5ff] bg-[#0d1c2d] text-white">
+    <div class="mx-auto flex max-w-[1500px] items-center justify-between px-6 py-4 md:px-8">
+      <%= link_to dashboard_path, class: "flex items-center gap-3 text-white no-underline transition hover:opacity-90" do %>
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1d7ef3] text-lg shadow-[0_10px_20px_rgba(29,126,243,0.45)]">✦</div>
+        <div class="text-[28px] font-bold tracking-[-0.04em]">GoalPilot AI</div>
+      <% end %>
 
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Tasks</h1>
-    <div class="flex space-x-4">
-      <%= link_to "Goals一覧", goals_path, class: "rounded-md px-3.5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white block font-medium" %>
-      <%= link_to "振り返りを書く", new_reflection_path, class: "rounded-md px-3.5 py-2.5 bg-green-600 hover:bg-green-500 text-white block font-medium" %>
-      <%= link_to "New task", new_task_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+      <nav class="hidden items-center gap-8 text-[14px] font-medium text-slate-200 md:flex">
+        <%= link_to "ダッシュボード", dashboard_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <%= link_to "目標一覧", goals_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <span class="rounded-full bg-white/10 px-3 py-1 font-semibold text-white">カレンダー</span>
+        <%= link_to "振り返り", new_reflection_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+      </nav>
     </div>
-  </div>
+  </header>
 
-<%= month_calendar(events: @tasks, attribute: :due_date) do |date, tasks| %>
-  <div class="text-gray-600 font-bold"><%= date.day %></div>
+  <main class="mx-auto max-w-[1500px] px-5 py-8 md:px-8 md:py-10">
+    <!-- 通知バナー -->
+    <% if notice.present? %>
+      <div class="mb-6 flex items-center justify-between rounded-[16px] border border-[#a7ddb4] bg-[#eefbf2] px-5 py-3.5 text-[15px] font-medium text-[#1a7f46] shadow-sm">
+        <div class="flex items-center gap-2">
+          <span>✓</span>
+          <span><%= notice %></span>
+        </div>
+      </div>
+    <% end %>
 
-  <% tasks.each do |task| %>
-    <div class="bg-blue-100 text-blue-800 text-sm rounded px-1 mt-1">
-      <%= task.title %>
+    <!-- ページ見出し & アクションボタン -->
+    <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <div class="mb-2 inline-flex items-center rounded-full border border-[#9ed0ff] bg-[#dfeeff] px-3.5 py-1 text-[13px] font-semibold text-[#1d7ef3]">
+          <span class="mr-1.5">✦</span>
+          スケジュール & タスクカレンダー
+        </div>
+        <h1 class="text-[34px] font-bold tracking-[-0.04em] text-slate-900">
+          タスクカレンダー
+        </h1>
+        <p class="mt-1 text-[15px] text-slate-500">
+          AIが提案したタスクと日々の進捗を月単位で一覧・管理できます。
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <%= link_to new_reflection_path, class: "inline-flex items-center gap-2 rounded-[14px] border border-[#dfe5eb] bg-white px-4 py-2.5 text-[14px] font-semibold text-slate-700 shadow-sm transition hover:bg-[#f8faff] hover:border-[#b7d3ff] no-underline" do %>
+          <span>◫</span>
+          <span>振り返りを書く</span>
+        <% end %>
+
+        <%= link_to new_task_path, class: "inline-flex items-center gap-2 rounded-[14px] bg-[#1d7ef3] px-4 py-2.5 text-[14px] font-bold text-white shadow-[0_8px_18px_rgba(29,126,243,0.25)] transition hover:bg-[#1769cf] no-underline" do %>
+          <span>＋</span>
+          <span>新規タスク</span>
+        <% end %>
+      </div>
     </div>
-  <% end %>
-<% end %>
 
-  <div id="tasks" class="min-w-full divide-y divide-gray-200 space-y-5">
-    <% if @tasks.any? %>
-      <% @tasks.each do |task| %>
-        <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
-          <%= render task %>
-          <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
-            <%= link_to "Show", task, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= link_to "Edit", edit_task_path(task), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= button_to "Destroy", task, method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+    <!-- カレンダー本体カード -->
+    <section class="rounded-[30px] border border-[#dde3ea] bg-[#f3f6f8] p-5 shadow-[0_24px_52px_rgba(17,24,39,0.06)] md:p-8">
+      <div class="rounded-[22px] border border-[#dfe5eb] bg-white p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)] md:p-7">
+        <%= month_calendar(events: @tasks, attribute: :due_date) do |date, tasks| %>
+          <div class="mb-1.5 flex items-center justify-between">
+            <span class="inline-flex h-6 w-6 items-center justify-center rounded-full text-[13px] font-bold <%= date == Date.current ? 'bg-[#1d7ef3] text-white shadow-xs' : 'text-slate-700' %>">
+              <%= date.day %>
+            </span>
+            <% if tasks.any? %>
+              <span class="text-[10px] font-semibold text-slate-400">
+                <%= tasks.count %>件
+              </span>
+            <% end %>
+          </div>
+
+          <div class="space-y-1">
+            <% tasks.each do |task| %>
+              <%= link_to task_path(task), class: "group flex items-center justify-between rounded-md px-1.5 py-1 text-[11px] font-medium no-underline transition #{task.status == 'completed' ? 'bg-slate-100 text-slate-400 line-through' : (task.must_do? ? 'border border-[#bedbff] bg-[#ebf4ff] text-[#1d7ef3] hover:bg-[#dfedff]' : 'border border-[#bce8cb] bg-[#eef8f2] text-[#1b7e46] hover:bg-[#e2f3e8]')}" do %>
+                <span class="truncate"><%= task.title %></span>
+                <span class="ml-1 shrink-0 text-[9px] font-bold <%= task.must_do? ? 'text-blue-500' : 'text-green-600' %>">
+                  <%= task.must_do? ? '必須' : '＋' %>
+                </span>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- 登録タスク一覧セクション -->
+    <section class="mt-10 rounded-[30px] border border-[#dde3ea] bg-[#f3f6f8] p-5 shadow-[0_24px_52px_rgba(17,24,39,0.06)] md:p-8">
+      <div class="rounded-[22px] border border-[#dfe5eb] bg-white p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)] md:p-7">
+        <div class="mb-6 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <h2 class="text-[22px] font-bold tracking-tight text-slate-800">
+              すべてのタスク
+            </h2>
+            <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-[12px] font-semibold text-slate-600">
+              <%= @tasks.count %>件
+            </span>
           </div>
         </div>
-      <% end %>
-    <% else %>
-      <p class="text-center my-10">No tasks found.</p>
-    <% end %>
-  </div>
+
+        <% if @tasks.any? %>
+          <% tasks_list = @tasks.respond_to?(:order) ? @tasks.order(due_date: :asc, id: :desc) : @tasks.sort_by { |t| [t.due_date || Date.new(9999), -t.id.to_i] } %>
+          <div class="divide-y divide-slate-100">
+            <% tasks_list.each do |task| %>
+              <div class="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center sm:justify-between transition hover:bg-slate-50/50 rounded-xl px-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <!-- チェックボックス形式（トグル） -->
+                  <%= form_with model: task, class: "shrink-0" do |f| %>
+                    <%= f.check_box :status,
+                      {
+                        checked: task.status == 'completed',
+                        class: "h-5 w-5 rounded border-[#b9c5d5] text-green-600 focus:ring-green-500 cursor-pointer",
+                        onchange: "this.form.requestSubmit()"
+                      },
+                      'completed',
+                      'pending' %>
+                  <% end %>
+
+                  <div class="min-w-0">
+                    <div class="text-[15px] font-semibold text-slate-800 truncate <%= 'line-through text-slate-400' if task.status == 'completed' %>">
+                      <%= task.title %>
+                    </div>
+                    <div class="mt-0.5 flex items-center gap-2 text-[12px] text-slate-500">
+                      <% if task.due_date.present? %>
+                        <span>📅 <%= task.due_date.strftime("%Y/%m/%d") %></span>
+                      <% else %>
+                        <span>📅 期日なし</span>
+                      <% end %>
+                      <span>•</span>
+                      <span class="<%= task.must_do? ? 'text-blue-600' : 'text-green-600' %>">
+                        <%= task.must_do? ? '必須タスク' : 'ボーナスタスク' %>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                  <%= link_to "詳細", task, class: "rounded-lg border border-[#dfe5eb] bg-white px-3 py-1.5 text-[12px] font-medium text-slate-600 transition hover:bg-[#f7f9fb] no-underline" %>
+                  <%= link_to "編集", edit_task_path(task), class: "rounded-lg border border-[#dfe5eb] bg-white px-3 py-1.5 text-[12px] font-medium text-slate-600 transition hover:bg-[#f7f9fb] no-underline" %>
+                  <%= button_to "削除", task, method: :delete, class: "rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-[12px] font-medium text-red-600 transition hover:bg-red-100 cursor-pointer", data: { turbo_confirm: "本当にこのタスクを削除しますか？" } %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="py-12 text-center text-slate-400">
+            <p class="text-[16px]">登録されているタスクはまだありません。</p>
+            <%= link_to "+ 新規タスクを作成する", new_task_path, class: "mt-3 inline-block font-semibold text-[#1d7ef3] hover:underline" %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  </main>
 </div>

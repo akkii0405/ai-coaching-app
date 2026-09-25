@@ -20,7 +20,7 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
       post tasks_url, params: { task: { due_date: @task.due_date, status: @task.status, task_type: @task.task_type, title: @task.title } }
     end
 
-    assert_redirected_to task_url(Task.last)
+    assert_redirected_to dashboard_url
   end
 
   test "should show task" do

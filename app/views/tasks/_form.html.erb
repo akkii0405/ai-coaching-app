@@ -1,9 +1,8 @@
-<%= form_with(model: task, class: "contents") do |form| %>
+<%= form_with(model: task, class: "mt-6") do |form| %>
   <% if task.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(task.errors.count, "error") %> prohibited this task from being saved:</h2>
-
-      <ul class="list-disc ml-6">
+    <div id="error_explanation" class="mb-5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+      <h2 class="font-medium"><%= pluralize(task.errors.count, "error") %> prohibited this task from being saved:</h2>
+      <ul class="mt-2 list-disc pl-5">
         <% task.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -11,27 +10,97 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :title %>
-    <%= form.text_field :title, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": task.errors[:title].none?, "border-red-400 focus:outline-red-600": task.errors[:title].any?}] %>
+  <!-- タスク名入力 -->
+  <div class="mb-5">
+    <%= form.label :title, "タスク名", class: "block text-[15px] font-bold text-slate-800" %>
+    <%= form.text_field :title,
+      id: "task_title",
+      class: "mt-2 w-full rounded-[16px] border border-[#dfe5eb] bg-white px-4 py-3.5 text-[16px] text-slate-800 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] outline-none transition placeholder:text-slate-400 focus:border-[#6aa9ff] focus:ring-4 focus:ring-[#dfeeff]",
+      placeholder: "例：Railsチュートリアルの第3章を完了する" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :due_date %>
-    <%= form.date_field :due_date, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": task.errors[:due_date].none?, "border-red-400 focus:outline-red-600": task.errors[:due_date].any?}] %>
+  <!-- 期日（カレンダー選択） -->
+  <div class="mt-5">
+    <div class="flex items-center justify-between">
+      <%= form.label :due_date, "期日（日付）", class: "block text-[15px] font-bold text-slate-800" %>
+      <span class="text-[12px] font-medium text-slate-400">📅 カレンダー選択</span>
+    </div>
+    <%= form.date_field :due_date,
+      id: "task_due_date",
+      value: (task.due_date || Date.current).strftime("%Y-%m-%d"),
+      class: "mt-2 w-full rounded-[16px] border border-[#dfe5eb] bg-white px-4 py-3.5 text-[16px] text-slate-800 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] outline-none transition focus:border-[#6aa9ff] focus:ring-4 focus:ring-[#dfeeff] cursor-pointer" %>
+
+    <!-- クイック日付ショートカットボタン -->
+    <div class="mt-2.5 flex flex-wrap gap-2">
+      <% [
+        { label: "今日", date: Date.current },
+        { label: "明日", date: Date.tomorrow },
+        { label: "3日後", date: Date.current + 3.days },
+        { label: "1週間後", date: Date.current + 7.days }
+      ].each do |term| %>
+        <button type="button"
+                onclick="document.getElementById('task_due_date').value = '<%= term[:date].strftime("%Y-%m-%d") %>';"
+                class="rounded-full border border-[#dfe5eb] bg-[#f7f9fb] px-3 py-1 text-[12px] font-medium text-slate-600 transition hover:border-[#b7d3ff] hover:bg-[#eaf2ff] hover:text-[#1d7ef3]">
+          <%= term[:label] %>
+        </button>
+      <% end %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :task_type, "タスクの種類" %>
-    <%= form.select :task_type, Task.task_types.keys.map { |k| [k.humanize, k] }, {}, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- タスクの種類（優先度） -->
+  <div class="mt-6">
+    <label class="block text-[15px] font-bold text-slate-800">
+      タスクの種類（優先度）
+    </label>
+    <div class="mt-3 grid grid-cols-2 gap-3">
+      <% [
+        { value: "must_do", label: "必須タスク", sub: "期日までに必ずやり切る", icon: "⭐" },
+        { value: "bonus", label: "ボーナスタスク", sub: "余裕があれば進める", icon: "🌱" }
+      ].each do |opt| %>
+        <label class="cursor-pointer">
+          <%= form.radio_button :task_type, opt[:value], checked: (task.task_type.to_s == opt[:value] || (task.task_type.blank? && opt[:value] == "must_do")), class: "peer sr-only" %>
+          <div class="flex flex-col items-center justify-center rounded-[16px] border border-[#dfe5eb] bg-white p-3.5 text-center transition hover:border-[#b7d3ff] hover:bg-[#f8faff] peer-checked:border-[#1d7ef3] peer-checked:bg-[#eaf3ff] peer-checked:text-[#1d7ef3] peer-checked:shadow-[0_4px_12px_rgba(29,126,243,0.15)]">
+            <span class="text-[14px] font-bold"><%= opt[:icon] %> <%= opt[:label] %></span>
+            <span class="mt-1 text-[11px] text-slate-500 peer-checked:text-[#1d7ef3]"><%= opt[:sub] %></span>
+          </div>
+        </label>
+      <% end %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :status, "ステータス" %>
-    <%= form.select :status, Task.statuses.keys.map { |k| [k.humanize, k] }, {}, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- ステータス（編集時、または必要に応じて） -->
+  <% if !task.new_record? %>
+    <div class="mt-6">
+      <label class="block text-[15px] font-bold text-slate-800">
+        ステータス
+      </label>
+      <div class="mt-3 grid grid-cols-2 gap-3">
+        <% [
+          { value: "pending", label: "未完了", sub: "これから取り組む" },
+          { value: "completed", label: "完了", sub: "完了済み" }
+        ].each do |opt| %>
+          <label class="cursor-pointer">
+            <%= form.radio_button :status, opt[:value], checked: (task.status.to_s == opt[:value]), class: "peer sr-only" %>
+            <div class="flex flex-col items-center justify-center rounded-[16px] border border-[#dfe5eb] bg-white p-3 text-center transition hover:border-[#b7d3ff] hover:bg-[#f8faff] peer-checked:border-[#1d7ef3] peer-checked:bg-[#eaf3ff] peer-checked:text-[#1d7ef3]">
+              <span class="text-[14px] font-bold"><%= opt[:label] %></span>
+              <span class="mt-1 text-[11px] text-slate-500 peer-checked:text-[#1d7ef3]"><%= opt[:sub] %></span>
+            </div>
+          </label>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <%= form.hidden_field :status, value: "pending" %>
+  <% end %>
+
+  <!-- 送信ボタン -->
+  <div class="mt-8">
+    <%= form.submit (task.new_record? ? "タスクを登録する →" : "タスクを更新する →"), class: "w-full cursor-pointer rounded-[14px] bg-[#1d7ef3] px-5 py-4 text-[16px] font-bold text-white shadow-[0_12px_22px_rgba(29,126,243,0.28)] transition hover:bg-[#1769cf]" %>
   </div>
 
-  <div class="inline">
-    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  <div class="mt-4 flex items-center justify-center gap-4 text-center">
+    <%= link_to "← カレンダーに戻る", tasks_path, class: "text-[14px] font-medium text-slate-500 no-underline transition hover:text-slate-800" %>
+    <span class="text-slate-300">•</span>
+    <%= link_to "ダッシュボード", dashboard_path, class: "text-[14px] font-medium text-slate-500 no-underline transition hover:text-slate-800" %>
   </div>
 <% end %>

@@ -1,9 +1,69 @@
-<% content_for :title, "New reflection" %>
+<% content_for :title, "振り返り入力 - GoalPilot AI" %>
 
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New reflection</h1>
+<div class="min-h-screen w-full bg-[#eef1f4] text-slate-800">
+  <header class="border-b border-[#7bb5ff] bg-[#0d1c2d] text-white">
+    <div class="mx-auto flex max-w-[1500px] items-center justify-between px-6 py-4 md:px-8">
+      <%= link_to dashboard_path, class: "flex items-center gap-3 text-white no-underline transition hover:opacity-90" do %>
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1d7ef3] text-lg shadow-[0_10px_20px_rgba(29,126,243,0.45)]">✦</div>
+        <div class="text-[28px] font-bold tracking-[-0.04em]">GoalPilot AI</div>
+      <% end %>
 
-  <%= render "form", reflection: @reflection %>
+      <nav class="hidden items-center gap-8 text-[14px] font-medium text-slate-200 md:flex">
+        <%= link_to "ダッシュボード", dashboard_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <%= link_to "目標一覧", goals_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <%= link_to "カレンダー", tasks_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <span class="rounded-full bg-white/10 px-3 py-1 font-semibold text-white">振り返り</span>
+      </nav>
+    </div>
+  </header>
 
-  <%= link_to "Back to reflections", reflections_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <main class="mx-auto max-w-[1500px] px-5 py-8 md:px-8 md:py-10">
+    <div class="grid items-center gap-8 xl:grid-cols-[0.98fr_1.12fr]">
+      <section class="px-2 py-4 md:px-6">
+        <div class="mb-6 inline-flex items-center rounded-full border border-[#9ed0ff] bg-[#dfeeff] px-4 py-2 text-[14px] font-semibold text-[#1d7ef3]">
+          <span class="mr-2">✦</span>
+          夜の振り返り & ルート再計算
+        </div>
+
+        <h1 class="max-w-[560px] text-[52px] font-black leading-[1.05] tracking-[-0.06em] text-slate-900">
+          今日を振り返れば、<br>
+          AIが明日への歩みを<br>
+          再調整する。
+        </h1>
+
+        <p class="mt-7 max-w-[520px] text-[18px] leading-relaxed text-slate-600">
+          今日の実績やタスク量、気づきを入力するだけで、AIがロードマップと照らし合わせ、明日やるべきタスクと優先度を自動調整します。
+        </p>
+
+        <ul class="mt-7 space-y-4 text-[18px] text-slate-700">
+          <li class="flex items-center gap-3">
+            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#d9f6e4] text-[12px] text-[#1c9d53]">✓</span>
+            <span>タスクの負担感から明日の負荷を最適化</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#d9f6e4] text-[12px] text-[#1c9d53]">✓</span>
+            <span>遅れや進み具合を吸収してルート再計算</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#d9f6e4] text-[12px] text-[#1c9d53]">✓</span>
+            <span>AIコーチからの具体的なフィードバックとアドバイス</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="rounded-[30px] border border-[#dde3ea] bg-[#f3f6f8] p-6 shadow-[0_24px_52px_rgba(17,24,39,0.06)] md:p-8">
+        <div class="rounded-[22px] border border-[#dfe5eb] bg-white/70 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.28)] md:p-8">
+          <h2 class="text-center text-[28px] font-bold tracking-[-0.04em] text-slate-800 md:text-[34px]">
+            今日の振り返りを教えてください
+          </h2>
+
+          <p class="mt-4 text-center text-[15px] leading-relaxed text-slate-500">
+            今日の進捗や感じた負担感を共有して、明日への無理のないアクションを導き出します。
+          </p>
+
+          <%= render "reflections/form", reflection: @reflection %>
+        </div>
+      </section>
+    </div>
+  </main>
 </div>

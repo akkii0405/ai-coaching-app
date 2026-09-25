@@ -1,11 +1,43 @@
-<% content_for :title, "Editing reflection" %>
+<% content_for :title, "振り返りの修正 - GoalPilot AI" %>
 
-<div class="max-w-2xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg border border-gray-100">
-  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">🔄 AIに再提案をお願いする</h1>
-  
-  <%= render "form", reflection: @reflection %>
-  
-  <div class="text-center mt-4">
-    <%= link_to "キャンセルして戻る", @reflection, class: "text-blue-600 font-medium hover:underline" %>
-  </div>
+<div class="min-h-screen w-full bg-[#eef1f4] text-slate-800">
+  <header class="border-b border-[#7bb5ff] bg-[#0d1c2d] text-white">
+    <div class="mx-auto flex max-w-[1500px] items-center justify-between px-6 py-4 md:px-8">
+      <%= link_to dashboard_path, class: "flex items-center gap-3 text-white no-underline transition hover:opacity-90" do %>
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1d7ef3] text-lg shadow-[0_10px_20px_rgba(29,126,243,0.45)]">✦</div>
+        <div class="text-[28px] font-bold tracking-[-0.04em]">GoalPilot AI</div>
+      <% end %>
+
+      <nav class="hidden items-center gap-8 text-[14px] font-medium text-slate-200 md:flex">
+        <%= link_to "ダッシュボード", dashboard_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <%= link_to "目標一覧", goals_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <%= link_to "カレンダー", tasks_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <span class="rounded-full bg-white/10 px-3 py-1 font-semibold text-white">振り返り</span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-[1500px] px-5 py-8 md:px-8 md:py-10">
+    <div class="mx-auto max-w-[680px]">
+      <section class="rounded-[30px] border border-[#dde3ea] bg-[#f3f6f8] p-6 shadow-[0_24px_52px_rgba(17,24,39,0.06)] md:p-8">
+        <div class="rounded-[22px] border border-[#dfe5eb] bg-white/70 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.28)] md:p-8">
+          <div class="mb-4 text-center">
+            <span class="inline-flex items-center rounded-full border border-[#9ed0ff] bg-[#dfeeff] px-3.5 py-1 text-[13px] font-semibold text-[#1d7ef3]">
+              🔄 ルート再調整
+            </span>
+          </div>
+
+          <h2 class="text-center text-[28px] font-bold tracking-[-0.04em] text-slate-800 md:text-[32px]">
+            AIに明日の計画を再提案してもらう
+          </h2>
+
+          <p class="mt-3 text-center text-[15px] leading-relaxed text-slate-500">
+            要望や調整したい点を入力して、プランを再構築します。
+          </p>
+
+          <%= render "reflections/form", reflection: @reflection %>
+        </div>
+      </section>
+    </div>
+  </main>
 </div>

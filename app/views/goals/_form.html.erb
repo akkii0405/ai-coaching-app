@@ -1,8 +1,8 @@
-<%= form_with(model: goal, class: "contents") do |form| %>
+<%= form_with(model: goal, class: "mt-8") do |form| %>
   <% if goal.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(goal.errors.count, "error") %> prohibited this goal from being saved:</h2>
-      <ul>
+    <div id="error_explanation" class="mb-5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+      <h2 class="font-medium"><%= pluralize(goal.errors.count, "error") %> prohibited this goal from being saved:</h2>
+      <ul class="mt-2 list-disc pl-5">
         <% goal.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -10,26 +10,73 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :title, "目標（何を達成したいですか？）", class: "font-bold text-gray-700" %>
-    <%= form.text_field :title, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", placeholder: "例：基本情報技術者試験に合格する" %>
+  <!-- 目標タイトル入力 -->
+  <div class="mb-5">
+    <%= form.label :title, "目標（何を達成したいですか？）", class: "block text-[15px] font-bold text-slate-800" %>
+    <%= form.text_field :title,
+      id: "goal_title",
+      class: "mt-2 w-full rounded-[16px] border border-[#dfe5eb] bg-white px-4 py-4 text-[17px] text-slate-800 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] outline-none transition placeholder:text-slate-400 focus:border-[#6aa9ff] focus:ring-4 focus:ring-[#dfeeff]",
+      placeholder: "例：バックエンドエンジニアとして転職する" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :target_date, "いつまでに達成したいですか？", class: "font-bold text-gray-700" %>
-    <%= form.date_field :target_date, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- サンプル目標タグ -->
+  <div class="mt-3 flex flex-wrap gap-2">
+    <% ["3か月で転職する", "英語を毎日使いこなす", "個人開発でWebアプリを公開する"].each do |sample| %>
+      <button type="button"
+              onclick="document.getElementById('goal_title').value = '<%= sample %>';"
+              class="rounded-full border border-[#dfe5eb] bg-[#eef3fb] px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition hover:border-[#b7d3ff] hover:bg-[#eaf2ff]">
+        + <%= sample %>
+      </button>
+    <% end %>
   </div>
 
-  <!-- やり直し（Edit）の時だけ、AIへの要望入力欄を表示する -->
+  <!-- 達成期限（カレンダー選択） -->
+  <div class="mt-6">
+    <div class="flex items-center justify-between">
+      <%= form.label :target_date, "いつまでに達成したいですか？（達成期限）", class: "block text-[15px] font-bold text-slate-800" %>
+      <span class="text-[12px] font-medium text-slate-400">📅 カレンダー選択</span>
+    </div>
+    <%= form.date_field :target_date,
+      id: "goal_target_date",
+      value: (goal.target_date || Date.current + 90.days).strftime("%Y-%m-%d"),
+      min: Date.current.strftime("%Y-%m-%d"),
+      class: "mt-2 w-full rounded-[16px] border border-[#dfe5eb] bg-white px-4 py-3.5 text-[16px] text-slate-800 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] outline-none transition focus:border-[#6aa9ff] focus:ring-4 focus:ring-[#dfeeff] cursor-pointer" %>
+
+    <!-- クイック期限選択ボタン -->
+    <div class="mt-2.5 flex flex-wrap gap-2">
+      <% [
+        { label: "1か月後", days: 30 },
+        { label: "3か月後 (おすすめ)", days: 90 },
+        { label: "半年後", days: 180 },
+        { label: "1年後", days: 365 }
+      ].each do |term| %>
+        <% target = (Date.current + term[:days].days).strftime("%Y-%m-%d") %>
+        <button type="button"
+                onclick="document.getElementById('goal_target_date').value = '<%= target %>';"
+                class="rounded-full border border-[#dfe5eb] bg-[#f7f9fb] px-3 py-1 text-[12px] font-medium text-slate-600 transition hover:border-[#b7d3ff] hover:bg-[#eaf2ff] hover:text-[#1d7ef3]">
+          <%= term[:label] %>
+        </button>
+      <% end %>
+    </div>
+  </div>
+
   <% if !goal.new_record? %>
-    <div class="my-5 p-4 bg-blue-50 rounded-lg border border-blue-100">
-      <label for="ai_request" class="font-bold text-blue-800">🤖 AIへの追加要望（やり直す場合のみ）</label>
-      <!-- 注意：これはgoalテーブルには保存しない一時データなので、form_withとは独立したタグを使います -->
-      <%= text_area_tag :ai_request, nil, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full", rows: 3, placeholder: "例：もっとゆったりしたスケジュールにしてほしい" %>
+    <div class="mt-6 rounded-[16px] border border-blue-100 bg-blue-50 p-4">
+      <label for="ai_request" class="text-[14px] font-semibold text-blue-800">🤖 AIへの追加要望（やり直す場合のみ）</label>
+      <%= text_area_tag :ai_request, nil, id: "ai_request", class: "mt-2 block w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100", rows: 3, placeholder: "例：もう少し現実的なペースにしてほしい" %>
+      <div class="mt-2.5 flex flex-wrap gap-2">
+        <% ["もう少し現実的なペースにしてほしい", "基礎固めの期間を長めにしてほしい", "より具体的なステップに細分化してほしい"].each do |sample| %>
+          <button type="button"
+                  onclick="const el = document.getElementById('ai_request'); el.value = el.value ? el.value + ' ' + '<%= sample %>' : '<%= sample %>';"
+                  class="rounded-full border border-blue-200 bg-white px-3 py-1 text-[12px] font-medium text-blue-700 transition hover:bg-blue-100">
+            + <%= sample %>
+          </button>
+        <% end %>
+      </div>
     </div>
   <% end %>
 
-  <div class="inline">
-    <%= form.submit "AIにロードマップを作成してもらう ✨", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer hover:bg-blue-700 w-full" %>
+  <div class="mt-8">
+    <%= form.submit (goal.new_record? ? "AIにロードマップを作ってもらう →" : "ロードマップを再生成・更新する →"), class: "w-full cursor-pointer rounded-[14px] bg-[#1d7ef3] px-5 py-4 text-[16px] font-bold text-white shadow-[0_12px_22px_rgba(29,126,243,0.28)] transition hover:bg-[#1769cf]" %>
   </div>
 <% end %>

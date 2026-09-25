@@ -1,10 +1,75 @@
-<% content_for :title, "Editing goal" %>
+<% content_for :title, "目標の編集 - GoalPilot AI" %>
 
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Editing goal</h1>
+<div class="min-h-screen w-full bg-[#eef1f4] text-slate-800">
+  <header class="border-b border-[#7bb5ff] bg-[#0d1c2d] text-white">
+    <div class="mx-auto flex max-w-[1500px] items-center justify-between px-6 py-4 md:px-8">
+      <%= link_to dashboard_path, class: "flex items-center gap-3 text-white no-underline transition hover:opacity-90" do %>
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1d7ef3] text-lg shadow-[0_10px_20px_rgba(29,126,243,0.45)]">✦</div>
+        <div class="text-[28px] font-bold tracking-[-0.04em]">GoalPilot AI</div>
+      <% end %>
 
-  <%= render "form", goal: @goal %>
+      <nav class="hidden items-center gap-8 text-[14px] font-medium text-slate-200 md:flex">
+        <%= link_to "ダッシュボード", dashboard_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <%= link_to "目標一覧", goals_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <%= link_to "カレンダー", tasks_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <%= link_to "振り返り", new_reflection_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+      </nav>
+    </div>
+  </header>
 
-  <%= link_to "Show this goal", @goal, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to goals", goals_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <main class="mx-auto max-w-[1500px] px-5 py-8 md:px-8 md:py-10">
+    <div class="grid items-center gap-8 xl:grid-cols-[0.98fr_1.12fr]">
+      <section class="px-2 py-4 md:px-6">
+        <div class="mb-6 inline-flex items-center rounded-full border border-[#9ed0ff] bg-[#dfeeff] px-4 py-2 text-[14px] font-semibold text-[#1d7ef3]">
+          <span class="mr-2">🔄</span>
+          目標の再調整 & ロードマップ再構築
+        </div>
+
+        <h1 class="max-w-[560px] text-[52px] font-black leading-[1.05] tracking-[-0.06em] text-slate-900">
+          目標を見直し、<br>
+          AIと新たなレール<br>
+          を再設定する。
+        </h1>
+
+        <p class="mt-7 max-w-[520px] text-[18px] leading-relaxed text-slate-600">
+          目標の内容や達成期限の変更、または「もう少しゆったり進めたい」といった追加の要望を伝えることで、AIがあなたに最適なロードマップを再生成します。
+        </p>
+
+        <ul class="mt-7 space-y-4 text-[18px] text-slate-700">
+          <li class="flex items-center gap-3">
+            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#d9f6e4] text-[12px] text-[#1c9d53]">✓</span>
+            <span>目標内容・達成期限の柔軟な見直し</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#d9f6e4] text-[12px] text-[#1c9d53]">✓</span>
+            <span>あなたのペースに合わせたAI追加リクエスト</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#d9f6e4] text-[12px] text-[#1c9d53]">✓</span>
+            <span>最新の状況を反映したロードマップの再構築</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="rounded-[30px] border border-[#dde3ea] bg-[#f3f6f8] p-6 shadow-[0_24px_52px_rgba(17,24,39,0.06)] md:p-8">
+        <div class="rounded-[22px] border border-[#dfe5eb] bg-white/70 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.28)] md:p-8">
+          <h2 class="text-center text-[28px] font-bold tracking-[-0.04em] text-slate-800 md:text-[34px]">
+            目標の編集・再設定
+          </h2>
+
+          <p class="mt-4 text-center text-[15px] leading-relaxed text-slate-500">
+            変更したい項目やAIへの要望を入力して、ロードマップを再生成します。
+          </p>
+
+          <%= render "goals/form", goal: @goal %>
+
+          <div class="mt-4 flex items-center justify-center gap-4 text-center">
+            <%= link_to "← 詳細に戻る", @goal, class: "text-[14px] font-medium text-slate-500 no-underline transition hover:text-slate-800" %>
+            <span class="text-slate-300">•</span>
+            <%= link_to "目標一覧へ", goals_path, class: "text-[14px] font-medium text-slate-500 no-underline transition hover:text-slate-800" %>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
 </div>

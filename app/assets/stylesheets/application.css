@@ -1,10 +1,30 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: #eef1f4;
+}
+
+body {
+  font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.dashboard-shell {
+  min-height: 100vh;
+  background: #eef1f4;
+}
+
+.dashboard-shell .menu-item {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.dashboard-shell .menu-item:hover {
+  transform: translateX(1px);
+}
+
+.dashboard-shell .timeline-dot {
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}

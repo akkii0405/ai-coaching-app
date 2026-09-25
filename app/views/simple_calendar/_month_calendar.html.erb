@@ -1,0 +1,66 @@
+<div class="simple-calendar w-full">
+  <!-- カレンダー操作ヘッダー -->
+  <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex items-center gap-3">
+      <h2 class="text-[24px] font-bold tracking-tight text-slate-800">
+        <%= start_date.strftime("%Y年 %-m月") %>
+      </h2>
+      <% if start_date.month == Date.current.month && start_date.year == Date.current.year %>
+        <span class="rounded-full bg-[#dfeeff] px-2.5 py-0.5 text-[12px] font-semibold text-[#1d7ef3]">
+          今月
+        </span>
+      <% end %>
+    </div>
+
+    <!-- 前月 / 今月 / 翌月 切り替えナビゲーション -->
+    <div class="flex items-center gap-1.5 rounded-xl border border-[#dfe5eb] bg-[#f7f9fb] p-1 shadow-sm">
+      <% prev_date = (date_range.first - 1.day).iso8601 %>
+      <% today_date = Date.current.iso8601 %>
+      <% next_date = (date_range.last + 1.day).iso8601 %>
+
+      <%= link_to tasks_path(start_date: prev_date), class: "inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-600 transition hover:bg-white hover:text-slate-900 hover:shadow-xs no-underline" do %>
+        <span>‹ 前月</span>
+      <% end %>
+
+      <%= link_to tasks_path(start_date: today_date), class: "inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-[13px] font-semibold transition hover:bg-white hover:shadow-xs no-underline #{start_date.month == Date.current.month && start_date.year == Date.current.year ? 'bg-white text-[#1d7ef3] shadow-xs' : 'text-slate-600'}" do %>
+        <span>今月</span>
+      <% end %>
+
+      <%= link_to tasks_path(start_date: next_date), class: "inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-600 transition hover:bg-white hover:text-slate-900 hover:shadow-xs no-underline" do %>
+        <span>次月 ›</span>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- カレンダーグリッドテーブル -->
+  <div class="overflow-x-auto rounded-2xl border border-[#e2e8f0] bg-white shadow-xs">
+    <table class="w-full min-w-[700px] border-collapse table-fixed">
+      <thead>
+        <tr class="border-b border-[#e2e8f0] bg-[#f8fafc]">
+          <% date_range.slice(0, 7).each do |day| %>
+            <th class="py-3 text-center text-[13px] font-bold tracking-wider <%= day.sunday? ? 'text-red-500' : (day.saturday? ? 'text-blue-500' : 'text-slate-600') %>">
+              <% jp_wdays = %w(日 月 火 水 木 金 土) %>
+              <%= jp_wdays[day.wday] %>
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-[#e2e8f0]">
+        <% date_range.each_slice(7) do |week| %>
+          <tr class="divide-x divide-[#e2e8f0]">
+            <% week.each do |day| %>
+              <% is_today = (day == Date.current) %>
+              <% is_current_month = (day.month == start_date.month) %>
+              <% is_weekend = day.saturday? || day.sunday? %>
+
+              <%= content_tag :td, class: "h-28 sm:h-32 p-1.5 sm:p-2.5 align-top transition #{is_today ? 'bg-[#f0f7ff]/70' : (is_current_month ? (is_weekend ? 'bg-slate-50/40' : 'bg-white') : 'bg-slate-50/80 text-slate-300')}" do %>
+                <% instance_exec(day, calendar.sorted_events_for(day), &passed_block) %>
+              <% end %>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

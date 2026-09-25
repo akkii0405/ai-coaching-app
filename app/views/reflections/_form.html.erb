@@ -1,9 +1,8 @@
-<%= form_with(model: reflection, class: "contents") do |form| %>
+<%= form_with(model: reflection, class: "mt-6") do |form| %>
   <% if reflection.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(reflection.errors.count, "error") %> prohibited this reflection from being saved:</h2>
-
-      <ul class="list-disc ml-6">
+    <div id="error_explanation" class="mb-5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+      <h2 class="font-medium"><%= pluralize(reflection.errors.count, "error") %> prohibited this reflection from being saved:</h2>
+      <ul class="mt-2 list-disc pl-5">
         <% reflection.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -11,22 +10,76 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :date, "日付" %>
-    <%= form.date_field :date, readonly: true, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full bg-gray-100 text-gray-500" %>
+  <%= form.hidden_field :date, value: reflection.date || Date.current %>
+
+  <!-- 対象日表示 -->
+  <div class="flex items-center justify-between rounded-[14px] border border-[#dfe5eb] bg-[#f7f9fb] px-4 py-3">
+    <div class="flex items-center gap-2 text-[14px] font-semibold text-slate-700">
+      <span class="text-slate-400">📅</span>
+      <span>対象日</span>
+    </div>
+    <div class="text-[14px] font-bold text-[#1d7ef3]">
+      <%= (reflection.date || Date.current).strftime("%Y年%-m月%-d日") %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :task_volume, "今日のタスク量はどうでしたか？" %>
-    <%= form.select :task_volume, Reflection.task_volumes.keys.map { |k| [k.humanize, k] }, {}, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- タスク量の選択肢 -->
+  <div class="mt-6">
+    <label class="block text-[15px] font-bold text-slate-800">
+      今日のタスク量はどうでしたか？
+    </label>
+    <div class="mt-3 grid grid-cols-3 gap-3">
+      <% [
+        { value: "too_much", label: "多い", sub: "追いつかなかった" },
+        { value: "just_right", label: "ちょうどいい", sub: "計画通り進んだ" },
+        { value: "too_little", label: "少ない", sub: "もっと進められた" }
+      ].each do |opt| %>
+        <label class="cursor-pointer">
+          <%= form.radio_button :task_volume, opt[:value], checked: (reflection.task_volume.to_s == opt[:value] || (reflection.task_volume.blank? && opt[:value] == "just_right")), class: "peer sr-only" %>
+          <div class="flex flex-col items-center justify-center rounded-[16px] border border-[#dfe5eb] bg-white p-3 text-center transition hover:border-[#b7d3ff] hover:bg-[#f8faff] peer-checked:border-[#1d7ef3] peer-checked:bg-[#eaf3ff] peer-checked:text-[#1d7ef3] peer-checked:shadow-[0_4px_12px_rgba(29,126,243,0.15)]">
+            <span class="text-[15px] font-bold"><%= opt[:label] %></span>
+            <span class="mt-1 text-[11px] text-slate-500 peer-checked:text-[#1d7ef3]"><%= opt[:sub] %></span>
+          </div>
+        </label>
+      <% end %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :comment, "原因や、AIへの追加要望（例：もっとタスクを減らして等）" %>
-    <%= form.textarea :comment, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": reflection.errors[:comment].none?, "border-red-400 focus:outline-red-600": reflection.errors[:comment].any?}] %>
+  <!-- 気づき・原因・AIへの追加要望 -->
+  <div class="mt-6">
+    <div class="flex items-center justify-between">
+      <label for="reflection_comment" class="text-[15px] font-bold text-slate-800">
+        気づき・原因・明日の要望
+      </label>
+      <span class="text-[12px] text-slate-400">任意</span>
+    </div>
+    <%= form.text_area :comment, rows: 4,
+      id: "reflection_comment",
+      class: "mt-2 block w-full rounded-[16px] border border-[#dfe5eb] bg-white p-4 text-[15px] text-slate-800 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] outline-none transition placeholder:text-slate-400 focus:border-[#6aa9ff] focus:ring-4 focus:ring-[#dfeeff]",
+      placeholder: "例：後半のタスクに予想より時間がかかってしまったので、明日は少しゆったりしたスケジュールに調整してほしい。" %>
   </div>
 
-  <div class="inline">
-    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  <!-- クイックサジェストボタン -->
+  <div class="mt-3 flex flex-wrap gap-2">
+    <% [
+      "明日は少しペースを落としたい",
+      "理解が曖昧なので復習を中心にしたい",
+      "集中できるのでタスクを増やしてほしい",
+      "特に問題なく順調に進んでいる"
+    ].each do |sample| %>
+      <button type="button"
+              onclick="const el = document.getElementById('reflection_comment'); el.value = el.value ? el.value + ' ' + '<%= sample %>' : '<%= sample %>';"
+              class="rounded-full border border-[#dfe5eb] bg-[#eef3fb] px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition hover:border-[#b7d3ff] hover:bg-[#eaf2ff]">
+        + <%= sample %>
+      </button>
+    <% end %>
+  </div>
+
+  <div class="mt-8">
+    <%= form.submit "AIに明日の計画を提案してもらう →", class: "w-full cursor-pointer rounded-[14px] bg-[#1d7ef3] px-5 py-4 text-[16px] font-bold text-white shadow-[0_12px_22px_rgba(29,126,243,0.28)] transition hover:bg-[#1769cf]" %>
+  </div>
+
+  <div class="mt-4 text-center">
+    <%= link_to "← ダッシュボードに戻る", dashboard_path, class: "text-[14px] font-medium text-slate-500 no-underline transition hover:text-slate-800" %>
   </div>
 <% end %>

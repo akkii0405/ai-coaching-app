@@ -1,92 +1,202 @@
-<% content_for :title, "Dashboard" %>
+<% content_for :title, "ダッシュボード - GoalPilot AI" %>
 
-<div class="max-w-5xl mx-auto mt-8 px-4">
-  <div class="flex justify-between items-center mb-8">
-    <h1 class="font-bold text-4xl">Dashboard</h1>
-    <!-- 共通メニュー -->
-    <div class="flex space-x-4">
-      <%= link_to "目標一覧", goals_path, class: "rounded-md px-3.5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white block font-medium" %>
-      <%= link_to "タスク一覧", tasks_path, class: "rounded-md px-3.5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white block font-medium" %>
-      <%= link_to "振り返りを書く", new_reflection_path, class: "rounded-md px-3.5 py-2.5 bg-green-600 hover:bg-green-500 text-white block font-medium" %>
+<div class="min-h-screen w-full bg-[#eef1f4] text-slate-800">
+  <header class="border-b border-[#7bb5ff] bg-[#0d1c2d] text-white">
+    <div class="mx-auto flex max-w-[1500px] items-center justify-between px-6 py-4 md:px-8">
+      <%= link_to dashboard_path, class: "flex items-center gap-3 text-white no-underline transition hover:opacity-90" do %>
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1d7ef3] text-lg shadow-[0_10px_20px_rgba(29,126,243,0.45)]">✦</div>
+        <div class="text-[28px] font-bold tracking-[-0.04em]">GoalPilot AI</div>
+      <% end %>
+
+      <nav class="hidden items-center gap-8 text-[14px] font-medium text-slate-200 md:flex">
+        <span class="rounded-full bg-white/10 px-3 py-1 font-semibold text-white">ダッシュボード</span>
+        <%= link_to "目標一覧", goals_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <%= link_to "カレンダー", tasks_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+        <%= link_to "振り返り", new_reflection_path, class: "text-slate-200 no-underline transition hover:text-white" %>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    <!-- 左側：設定中の目標 -->
-    <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
-      <h2 class="text-2xl font-bold mb-4 text-blue-700">🎯 設定中の目標</h2>
-      <% if @goals.any? %>
-        <ul class="space-y-4">
-          <% @goals.each do |goal| %>
-            <li class="border-b pb-2">
-              <p class="font-medium text-lg"><%= goal.title %></p>
-              <!-- 変更後 -->
-<% if goal.ai_roadmap.present? && goal.ai_roadmap.is_a?(Hash) %>
-  <div class="mt-4 space-y-4">
-    <!-- ① AIからのメッセージを取り出す -->
-    <div class="bg-blue-50 text-blue-800 p-3 rounded-md text-sm leading-relaxed">
-      💡 <%= goal.ai_roadmap["ai_message"] %>
-    </div>
-
-    <!-- ② ロードマップのリストをループで回す -->
-    <div class="space-y-4 pl-2">
-      <% goal.ai_roadmap["roadmap"].each do |step_data| %>
-        <!-- 左側に青い線を引いてタイムライン風にするデザイン -->
-        <div class="border-l-4 border-blue-400 pl-4 py-1">
-          
-          <!-- ③ ループの中のデータを取り出して表示 -->
-          <p class="text-xs text-gray-500 font-bold">
-            Step <%= step_data["step"] %> （<%= step_data["period"] %>）
-          </p>
-          <p class="font-semibold text-gray-800 mt-1">
-            <%= step_data["milestone"] %>
-          </p>
-          
-          <!-- フォーカスポイントもリスト（配列）なので、さらにループで回す！ -->
-          <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
-            <% step_data["focus_points"].each do |point| %>
-              <li><%= point %></li>
-            <% end %>
-          </ul>
-          
+  <main class="mx-auto max-w-[1500px] px-5 py-8 md:px-8 md:py-10">
+    <!-- 通知バナー -->
+    <% if notice.present? %>
+      <div class="mb-6 flex items-center justify-between rounded-[16px] border border-[#a7ddb4] bg-[#eefbf2] px-5 py-3.5 text-[15px] font-medium text-[#1a7f46] shadow-sm">
+        <div class="flex items-center gap-2">
+          <span>✓</span>
+          <span><%= notice %></span>
         </div>
-      <% end %>
-    </div>
-  </div>
-<% else %>
-  <!-- 万が一データがうまく読み込めなかった時の予備 -->
-  <p class="text-sm text-gray-500"><%= goal.ai_roadmap %></p>
-<% end %>
-            </li>
-          <% end %>
-        </ul>
-      <% else %>
-        <p class="text-gray-500">まだ目標が設定されていません。</p>
-        <%= link_to "目標を設定する", new_goal_path, class: "mt-2 inline-block text-blue-600 underline" %>
-      <% end %>
+      </div>
+    <% end %>
+
+    <!-- ヘッダーエリア -->
+    <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <div class="mb-2 inline-flex items-center rounded-full border border-[#9ed0ff] bg-[#dfeeff] px-3.5 py-1 text-[13px] font-semibold text-[#1d7ef3]">
+          <span class="mr-1.5">✦</span>
+          Day 12 / 84 • API設計と認証フェーズ
+        </div>
+        <h1 class="text-[34px] font-bold tracking-[-0.04em] text-slate-900">
+          おはよう、今日のレールです
+        </h1>
+        <p class="mt-1 text-[15px] text-slate-500">
+          目標に向かって、今日やるべきアクションを着実に進めましょう。
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <%= link_to new_task_path, class: "inline-flex items-center gap-2 rounded-[14px] border border-[#dfe5eb] bg-white px-4 py-2.5 text-[14px] font-semibold text-slate-700 shadow-sm transition hover:bg-[#f8faff] hover:border-[#b7d3ff] no-underline" do %>
+          <span>＋</span>
+          <span>タスク追加</span>
+        <% end %>
+
+        <div class="flex h-[76px] w-[84px] flex-col items-center justify-center rounded-[18px] border border-[#a7ddb4] bg-[#cfeed7] text-[#1a7f46] shadow-xs">
+          <div class="text-[20px] font-bold leading-none">7日</div>
+          <div class="mt-1 text-[12px] font-medium leading-none">継続中</div>
+        </div>
+      </div>
     </div>
 
-    <!-- 右側：今日のタスク（チェックボックス付き） -->
-    <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
-      <h2 class="text-2xl font-bold mb-4 text-green-700">✅ 今日のタスク</h2>
-      <% if @todays_tasks.any? %>
-        <ul class="space-y-3">
-          <% @todays_tasks.each do |task| %>
-            <li class="flex items-center space-x-3">
-              <!-- チェックボックス -->
-              <%= form_with model: task do |f| %>
-                <%= f.check_box :status, { checked: task.status == 'completed', class: "w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500" ,onchange: "this.form.requestSubmit()"}, 'completed', 'pending' %>
-                <span class="text-lg <%= 'line-through text-gray-400' if task.status == 'completed' %>">
-                  <%= task.title %>
-                </span>
-              <% end %>
-            </li>
+    <!-- メイングリッド (ロードマップ / 今日のタスク / AIコーチ・振り返り) -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr_1.1fr_0.8fr]">
+      <!-- 1. ロードマップ -->
+      <section class="rounded-[30px] border border-[#dde3ea] bg-[#f3f6f8] p-5 shadow-[0_24px_52px_rgba(17,24,39,0.06)] md:p-7">
+        <div class="rounded-[22px] border border-[#dfe5eb] bg-white p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)] md:p-6 min-h-[460px]">
+          <div class="mb-6 flex items-center justify-between">
+            <h2 class="text-[24px] font-bold tracking-[-0.04em] text-slate-800">ロードマップ</h2>
+            <% if @goals.any? %>
+              <div class="flex items-center gap-3">
+                <%= link_to "目標の管理・削除", goals_path, class: "text-[12px] font-medium text-slate-500 hover:text-slate-800 no-underline hover:underline" %>
+                <span class="rounded-full bg-[#dfeee5] px-3 py-1 text-[12px] font-semibold text-[#2e8b57]">進行中</span>
+              </div>
+            <% end %>
+          </div>
+
+          <% if @goals.any? %>
+            <% roadmap_goal = @goals.first %>
+            <% if roadmap_goal.ai_roadmap.present? && roadmap_goal.ai_roadmap.is_a?(Hash) %>
+              <div class="mt-6 space-y-6">
+                <% roadmap_goal.ai_roadmap["roadmap"].each do |step_data| %>
+                  <div class="flex items-start gap-4">
+                    <div class="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full <%= step_data["step"].to_i <= 2 ? 'bg-[#3ec87f]' : 'bg-[#cfd7e0]' %>"></div>
+                    <div class="flex-1 border-l-2 border-[#9abce8]/60 pl-4 pb-2">
+                      <div class="text-[11px] font-bold tracking-[0.08em] text-slate-500 uppercase">Step <%= step_data["step"] %> · <%= step_data["period"] %></div>
+                      <div class="mt-1.5 text-[15px] font-medium text-slate-700 leading-snug"><%= step_data["milestone"] %></div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="mt-6 rounded-[18px] bg-[#f5f7f8] p-5 text-center text-[15px] leading-relaxed text-slate-500">
+                まだロードマップが作成されていません。
+                <div class="mt-3">
+                  <%= link_to "目標を入力して作成する →", new_goal_path, class: "font-bold text-[#1d7ef3] hover:underline" %>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="mt-6 rounded-[18px] bg-[#f5f7f8] p-6 text-center text-[15px] leading-relaxed text-slate-500">
+              まだ目標が設定されていません。
+              <div class="mt-4">
+                <%= link_to "目標を設定する →", new_goal_path, class: "inline-block rounded-xl bg-[#1d7ef3] px-4 py-2.5 text-[14px] font-bold text-white shadow-sm hover:bg-[#1769cf] no-underline" %>
+              </div>
+            </div>
           <% end %>
-        </ul>
-      <% else %>
-        <p class="text-gray-500">今日のタスクはまだありません。</p>
-        <%= link_to "タスクを追加する", new_task_path, class: "mt-2 inline-block text-green-600 underline" %>
-      <% end %>
+        </div>
+      </section>
+
+      <!-- 2. 今日やるタスク -->
+      <section class="rounded-[30px] border border-[#dde3ea] bg-[#f3f6f8] p-5 shadow-[0_24px_52px_rgba(17,24,39,0.06)] md:p-7">
+        <div class="rounded-[22px] border border-[#dfe5eb] bg-white p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)] md:p-6 min-h-[460px]">
+          <div class="mb-6 flex items-center justify-between">
+            <h2 class="text-[24px] font-bold tracking-[-0.04em] text-slate-800">今日やるタスク</h2>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-[12px] font-semibold text-slate-600">
+              <%= @todays_tasks.count %>件
+            </span>
+          </div>
+
+          <% if @todays_tasks.any? %>
+            <div class="space-y-3">
+              <% @todays_tasks.each do |task| %>
+                <div class="flex items-center justify-between rounded-[14px] border border-[#dfe4eb] bg-white px-3.5 py-3.5 shadow-xs transition hover:border-[#b7d3ff] hover:shadow-sm">
+                  <!-- 完了チェックボックス（フォーム） -->
+                  <div class="mr-3 shrink-0">
+                    <%= form_with model: task, class: "flex items-center" do |f| %>
+                      <%= f.check_box :status,
+                        {
+                          checked: task.status == 'completed',
+                          class: "h-5 w-5 rounded border-[#b9c5d5] text-green-600 focus:ring-green-500 cursor-pointer",
+                          onchange: "this.form.requestSubmit()"
+                        },
+                        'completed',
+                        'pending' %>
+                    <% end %>
+                  </div>
+
+                  <!-- タスク詳細へのリンク（タップ領域） -->
+                  <%= link_to task_path(task), class: "group flex min-w-0 flex-1 items-center justify-between no-underline" do %>
+                    <div class="min-w-0">
+                      <span class="truncate text-[15px] font-medium text-slate-800 transition group-hover:text-[#1d7ef3] <%= 'line-through text-slate-400' if task.status == 'completed' %>">
+                        <%= task.title %>
+                      </span>
+                    </div>
+
+                    <div class="ml-3 flex items-center gap-2 shrink-0">
+                      <span class="text-[12px] font-medium text-slate-400">
+                        <%= task.try(:estimated_minutes).presence || "20分" %>
+                      </span>
+                      <span class="text-slate-300 text-[16px] leading-none transition group-hover:translate-x-0.5 group-hover:text-[#1d7ef3]">›</span>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="mt-6 rounded-[18px] bg-[#f5f7f8] p-6 text-center text-[15px] leading-relaxed text-slate-500">
+              今日のタスクはまだありません。
+              <div class="mt-4">
+                <%= link_to "+ 今日のタスクを追加する", new_task_path, class: "inline-block rounded-xl bg-[#1d7ef3] px-4 py-2.5 text-[14px] font-bold text-white shadow-sm hover:bg-[#1769cf] no-underline" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <!-- 3. AIコーチ・アクションエリア -->
+      <aside class="space-y-5">
+        <!-- AIコーチ提案カード -->
+        <div class="rounded-[26px] border border-[#dfe5eb] bg-white p-5 shadow-xs">
+          <div class="mb-3 flex items-center gap-2">
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#dfeeff] text-[13px] text-[#1d7ef3]">✦</span>
+            <span class="text-[14px] font-bold text-slate-800">AIコーチ提案</span>
+          </div>
+          <p class="text-[14px] leading-relaxed text-slate-600">
+            今日は最後のレビュー前に、今の進捗を一つだけ整理すると良いです。
+          </p>
+        </div>
+
+        <!-- ルート再計算カード -->
+        <div class="rounded-[26px] bg-[#111c2d] p-5 text-white shadow-[0_12px_24px_rgba(17,28,45,0.18)]">
+          <div class="mb-2 flex items-center gap-2 text-[14px] font-semibold text-slate-300">
+            <span>↻</span>
+            <span>ルート再計算</span>
+          </div>
+          <p class="mt-3 text-[14px] leading-relaxed text-slate-200">
+            未来が見えてきて大丈夫。夜の振り返りを見て明日のタスクを自動調整します。
+          </p>
+          <button type="button" class="mt-5 inline-flex w-full items-center justify-center rounded-[14px] bg-[#1a72d6] px-4 py-3 text-[14px] font-bold text-white shadow-[0_8px_16px_rgba(26,114,214,0.3)] transition hover:bg-[#1561b8]">
+            見つけた 1.5 日 → 吸収可能
+          </button>
+        </div>
+
+        <!-- 夜の振り返りカード -->
+        <div class="rounded-[26px] border border-[#dde3ea] bg-[#f3f6f8] p-5 shadow-xs">
+          <div class="text-[14px] font-bold text-slate-800">夜の振り返り</div>
+          <p class="mt-2.5 text-[14px] leading-relaxed text-slate-600">
+            今日どこで困ったか、何を学んだかを簡単に書いておくと、明日が見えやすくなります。
+          </p>
+          <%= link_to "AIに明日を提案してもらう →", new_reflection_path, class: "mt-5 inline-flex w-full items-center justify-center rounded-[14px] bg-[#1d83f1] px-4 py-3 text-[14px] font-bold text-white shadow-[0_8px_16px_rgba(29,131,241,0.25)] transition hover:bg-[#1769cf] no-underline" %>
+        </div>
+      </aside>
     </div>
-  </div>
+  </main>
 </div>
