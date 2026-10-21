@@ -67,7 +67,7 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "simple_calendar", "~> 3.0"
+gem "simple_calendar", "~> 3.1"
 
 gem "devise"
 
